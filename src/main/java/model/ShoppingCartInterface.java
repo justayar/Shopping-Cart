@@ -16,4 +16,6 @@ public interface ShoppingCartInterface {
     void addItem(Product product,int quantity);
     void applyDiscounts(List<Campaign> campaigns);
     void applyCoupon(Coupon coupon);
+
+    String print();
 }

@@ -2,16 +2,19 @@ package model;
 
 import lombok.*;
 import model.campaign.Campaign;
+import model.category.Category;
 import model.coupon.Coupon;
 import model.product.Product;
 import service.CampaignDiscountCalculator;
 import service.CouponDiscountCalculator;
 import service.DeliveryCostCalculator;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author canemreayar
@@ -33,6 +36,9 @@ public class ShoppingCart implements ShoppingCartInterface {
     private Coupon coupon;
 
     private DeliveryCostCalculator deliveryCostCalculator;
+
+    private String resultText = "";
+
 
     public ShoppingCart(DeliveryCostCalculator deliveryCostCalculator){
         shoppingCartList = new HashMap<>();
@@ -129,6 +135,27 @@ public class ShoppingCart implements ShoppingCartInterface {
 
 
         return totalCartAmount;
+    }
+
+    public String print(){
+
+
+        Map<@NotNull Category, List<Product>> groupedShoppingCartList = shoppingCartList.keySet().stream().collect(Collectors.groupingBy(Product::getCategory));
+
+        groupedShoppingCartList.forEach(((category, products) ->
+        {
+            for(Product product : products){
+                resultText += "\n CategoryName: "+category.getTitle().toUpperCase()+
+                        " ProductName: "+product.getTitle().toUpperCase()+
+                        " Quantity: "+shoppingCartList.get(product)+
+                        " Unit Price: "+product.getPrice();
+            }
+        }));
+
+        resultText +="\n TotalPrice: "+getTotalAmount();
+        resultText +="\n TotalDiscount: "+Double.sum(getCampaignDiscount(),getCouponDiscount());
+
+        return resultText;
     }
 
 }

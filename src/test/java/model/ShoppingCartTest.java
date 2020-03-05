@@ -1,5 +1,6 @@
 package model;
 
+import junit.framework.TestCase;
 import model.campaign.AmountCampaign;
 import model.campaign.Campaign;
 import model.campaign.RateCampaign;
@@ -12,7 +13,11 @@ import org.junit.Test;
 import service.DeliveryCostCalculator;
 import java.util.ArrayList;
 import java.util.List;
+
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
 
 public class ShoppingCartTest {
 
@@ -289,6 +294,34 @@ public class ShoppingCartTest {
         double totalAmountAfterDiscounts = shoppingCart.getTotalAmountAfterDiscounts();
 
         assertEquals(58.2,totalAmountAfterDiscounts,0);
+    }
+
+    @Test
+    public void printSuccessfully(){
+
+        mockShoppingCartItems();
+        List<Campaign> campaignList = new ArrayList<>();
+        Category fruits = new Category("fruits");
+        Campaign campaign1 = new RateCampaign(fruits,50.0,1);
+        campaignList.add(campaign1);
+        Coupon coupon = new RateCoupon(10,10);
+
+        shoppingCart.applyDiscounts(campaignList);
+        shoppingCart.applyCoupon(coupon);
+
+        String resultText = shoppingCart.print();
+
+        String expectedResult = "\n" +
+                " CategoryName: FRUITS ProductName: BANANA Quantity: 2 Unit Price: 5.0\n" +
+                " CategoryName: FRUITS ProductName: APPLE Quantity: 1 Unit Price: 2.0\n" +
+                " CategoryName: MOVIES ProductName: BATMAN Quantity: 1 Unit Price: 20.0\n" +
+                " CategoryName: MOVIES ProductName: STARTREK Quantity: 1 Unit Price: 25.0\n" +
+                " CategoryName: VEGETABLES ProductName: PATATO Quantity: 5 Unit Price: 2.0\n" +
+                " CategoryName: VEGETABLES ProductName: TOMATO Quantity: 3 Unit Price: 1.0\n" +
+                " TotalPrice: 70.0\n" +
+                " TotalDiscount: 11.8";
+
+        TestCase.assertEquals(expectedResult,resultText);
     }
 
 
