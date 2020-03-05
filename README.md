@@ -1,6 +1,6 @@
-#Shopping Cart Application
+# Shopping Cart Application
 
-Requirements
+## Requirements
 
 For building and running the application you need:
 
