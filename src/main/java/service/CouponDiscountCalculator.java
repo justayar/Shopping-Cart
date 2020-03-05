@@ -8,6 +8,9 @@ public class CouponDiscountCalculator {
 
     public double calculateCouponDiscountAmount(Coupon coupon,double totalCartAmountAfterCampaigns){
 
+        if(coupon == null)
+            throw new NullPointerException("There are no any coupon to calculate coupon discount amount.");
+
         boolean isCouponValid = coupon.checkCouponValidity(totalCartAmountAfterCampaigns);
 
         if(isCouponValid)

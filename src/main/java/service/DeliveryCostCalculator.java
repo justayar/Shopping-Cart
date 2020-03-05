@@ -1,11 +1,10 @@
 package service;
 
+import constants.ShoppingCartConstants;
 import lombok.*;
-import model.ShoppingCart;
 import model.category.Category;
 import model.product.Product;
 import util.StreamOperations;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,22 +15,27 @@ import java.util.stream.Collectors;
  */
 
 @Data
+@AllArgsConstructor
 public class DeliveryCostCalculator {
 
     private double costPerDelivery;
     private double costPerProduct;
 
-    private static final double FIXED_COST = 2.99;
-
     public double calculateFor(int numberOfDeliveries, int numberOfProducts){
 
-        return (this.costPerDelivery * numberOfDeliveries)
+        double deliveryCost = (this.costPerDelivery * numberOfDeliveries)
                 + (this.costPerProduct * numberOfProducts)
-                + FIXED_COST;
+                + ShoppingCartConstants.DELIVERY_FIXED_COST;
+
+        return Double.parseDouble(ShoppingCartConstants.DOUBLE_TWO_DIGIT_AFTER_DOT.format(deliveryCost));
+
     }
 
     public int getNumberOfDeliveries(Map<Product,Integer> shoppingCartList) {
-        return getDistinctCategoriesInCart(shoppingCartList).size();
+        if(shoppingCartList != null)
+            return getDistinctCategoriesInCart(shoppingCartList).size();
+
+        return 0;
     }
 
     private List<Category> getDistinctCategoriesInCart(Map<Product,Integer> shoppingCartList){
@@ -50,19 +54,17 @@ public class DeliveryCostCalculator {
     private void addCategoryOfEachDistinctCategoryProduct(List<Product> singleCategoryProducts, List<Category> categories) {
         singleCategoryProducts.forEach(product -> {
 
-            Category category = new Category();
-            category.setTitle(product.getTitle());
+            Category category = new Category(product.getTitle());
             categories.add(category);
         });
     }
 
-    public int getNumberOfProducts(Map<Product,Integer> shoppingCartList) {
-        return getDistinctProductsInCart(shoppingCartList).size();
+    public int getNumberOfDistinctProducts(Map<Product,Integer> shoppingCartList) {
+        if(shoppingCartList != null)
+            return shoppingCartList.size();
+
+        return 0;
     }
 
-    private List<Product> getDistinctProductsInCart(Map<Product,Integer> shoppingCartList){
-        return shoppingCartList.keySet().stream().
-                filter(StreamOperations.distinctByKey(Product::getTitle)).collect(Collectors.toList());
-    }
 }
 

@@ -28,19 +28,23 @@ public class CampaignDiscountCalculator {
 
     }
 
-    public int findRelatedDiscountCategoryItemQuantity(Campaign campaign,Map<Product,Integer> shoppingCartList){
+    private int findRelatedDiscountCategoryItemQuantity(Campaign campaign,Map<Product,Integer> shoppingCartList){
+
+        if(campaign == null)
+            throw new NullPointerException("There is no any campaign to find related discount");
 
         relatedDiscountCategoryItemQuantity = 0;
-        shoppingCartList.forEach((product,quantity) -> {
-            if(product.getCategory().equals(campaign.getCategory())){
-                relatedDiscountCategoryItemQuantity += quantity;
-            }
-        });
+            shoppingCartList.forEach((product, quantity) -> {
+                if (product.getCategory().equals(campaign.getCategory())) {
+                    relatedDiscountCategoryItemQuantity += quantity;
+                }
+            });
+
 
         return relatedDiscountCategoryItemQuantity;
     }
 
-    public double calculateTotalAmountForRelatedDiscountCategory(Campaign campaign,Map<Product,Integer> shoppingCartList){
+    private double calculateTotalAmountForRelatedDiscountCategory(Campaign campaign,Map<Product,Integer> shoppingCartList){
 
         totalAmountForRelatedDiscountCategory = 0;
         shoppingCartList.forEach((product,quantity) -> {

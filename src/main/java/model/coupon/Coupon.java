@@ -1,5 +1,6 @@
 package model.coupon;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 
@@ -8,6 +9,7 @@ import lombok.Data;
  */
 
 @Data
+@AllArgsConstructor
 public abstract class Coupon {
 
     double minPurchaseAmountForCoupon;

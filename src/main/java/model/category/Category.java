@@ -10,6 +10,10 @@ import lombok.Data;
 @Data
 public class Category implements Comparable<Category> {
 
+    public Category(String title){
+        this.title = title;
+    }
+
     private String title;
     private Category parentCategory;
 

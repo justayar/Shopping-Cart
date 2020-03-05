@@ -2,18 +2,16 @@ package model;
 
 import lombok.*;
 import model.campaign.Campaign;
-import model.category.Category;
 import model.coupon.Coupon;
 import model.product.Product;
 import service.CampaignDiscountCalculator;
 import service.CouponDiscountCalculator;
 import service.DeliveryCostCalculator;
-import util.StreamOperations;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author canemreayar
@@ -34,10 +32,25 @@ public class ShoppingCart implements ShoppingCartInterface {
 
     private Coupon coupon;
 
+    private DeliveryCostCalculator deliveryCostCalculator;
+
+    public ShoppingCart(DeliveryCostCalculator deliveryCostCalculator){
+        shoppingCartList = new HashMap<>();
+        this.deliveryCostCalculator = deliveryCostCalculator;
+        campaigns = new ArrayList<>();
+        campaignDiscountAmount = 0.0;
+        couponDiscountAmount = 0.0;
+
+    }
+
     public double getDeliveryCost(){
-        DeliveryCostCalculator deliveryCostCalculator = new DeliveryCostCalculator();
-        return deliveryCostCalculator.calculateFor(deliveryCostCalculator.getNumberOfDeliveries(shoppingCartList),
-                                            deliveryCostCalculator.getNumberOfProducts(shoppingCartList));
+        if(!shoppingCartList.isEmpty()){
+            return deliveryCostCalculator.calculateFor(deliveryCostCalculator.getNumberOfDeliveries(shoppingCartList),
+                    deliveryCostCalculator.getNumberOfDistinctProducts(shoppingCartList));
+        }
+
+        return 0;
+
     }
 
     public void addItem(Product product,int quantity){
@@ -58,9 +71,10 @@ public class ShoppingCart implements ShoppingCartInterface {
 
     public void applyDiscounts(List<Campaign> discounts){
 
-        if(discounts != null){
-            campaigns.addAll(discounts);
-        }
+        if(discounts == null)
+            throw new NullPointerException("There is no any valid campaigns to apply.");
+
+        campaigns.addAll(discounts);
 
     }
 
@@ -78,9 +92,10 @@ public class ShoppingCart implements ShoppingCartInterface {
 
     public void applyCoupon(Coupon coupon){
 
-        if(coupon!= null) {
-            this.coupon = coupon;
-        }
+        if(coupon == null)
+            throw new NullPointerException("There is no any valid coupon to apply.");
+
+        this.coupon = coupon;
 
     }
 
@@ -89,7 +104,6 @@ public class ShoppingCart implements ShoppingCartInterface {
         CouponDiscountCalculator couponDiscountCalculator = new CouponDiscountCalculator();
 
         double totalCartAmountAfterCampaigns = getTotalAmountAfterCampaigns();
-
 
         if(coupon != null){
             return couponDiscountCalculator.calculateCouponDiscountAmount(coupon,totalCartAmountAfterCampaigns);
@@ -110,9 +124,9 @@ public class ShoppingCart implements ShoppingCartInterface {
     private double getTotalAmount(){
 
         totalCartAmount = 0;
-        shoppingCartList.forEach((product,quantity) -> {
-            totalCartAmount += (product.getPrice() * quantity);
-        });
+        shoppingCartList.forEach((product,quantity) ->
+            totalCartAmount += (product.getPrice() * quantity));
+
 
         return totalCartAmount;
     }
