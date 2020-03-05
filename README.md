@@ -1,7 +1,7 @@
 
 # Shopping Cart Application
 
-This application is a simple design of Shopping Cart for an ecommerce system.
+This application is a simple design of Shopping Cart for an e-commerce system.
 
 ## Requirements
 
