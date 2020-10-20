@@ -61,8 +61,7 @@ public class DeliveryCostCalculator {
 
     public int getNumberOfDistinctProducts(Map<Product,Integer> shoppingCartList) {
         if(shoppingCartList != null)
-            return shoppingCartList.size();
-
+            return (int) shoppingCartList.keySet().stream().distinct().count();
         return 0;
     }
 
